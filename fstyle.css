@@ -1,0 +1,110 @@
+/* Global Settings */
+body{
+	font-family:Times New Roman;
+	background: #222;
+	height: 100%;
+	padding: 0px;
+	margin: 0px
+}
+#header{
+	color:#33c624;
+	font-family:Times New Roman;
+	font-size:60px;
+}
+/* Game Box */
+#Content{
+	height:706px;
+	width:1200px;
+	border-style: solid;
+	border-color: #000000;
+	border-width: thin;
+}
+
+/* Navigation Bar */
+ #nav-bar .nav {
+	font-size:15px;
+	font-family:Times New Roman;
+	
+}
+
+#nav-bar{
+	height:45px;
+	background:#444; /*this should match the lower border colour */
+	box-shadow: 0 1px 1px rgba(0,0,0,0.5), 0 2px 20px 0 rgba(0,0,0,0.2);
+}
+
+/* Nav-Bar Content */
+#nav-bar li{
+	display:inline-block;
+	border-style: ridge;
+	border-width: medium;
+	border-color:#444; /* this border colour here */
+	float:left;
+	
+	width:120px;
+	box-shadow:1px 0px 0 #555;
+	border-right: 1px solid #222;
+	
+	color: #aaa;
+	text-shadow: 0 -1px 0 #000;
+	text-transform:lowercase;
+	font-size: 12px;
+	line-height:40px;
+	text-align:center;
+	
+	cursor:pointer;
+}
+#nav-bar li:hover {
+	background: #000;
+	color:#FF0000;
+}
+
+/* Instructions Panel Controls */
+#footer .column{
+	color:#FFFFFF;
+	font-family:Times New Roman;
+	Text-align:left;
+	
+}
+
+.column{
+	padding: 0px;
+	display: block;
+	margin: 0px;
+	margin-top: 40px;
+	margin-left:0px;
+	border-width: thin;
+}
+
+.column h2{
+	display: compact;
+	Text-align:center;
+	margin: 10px;
+	color:#33c624;
+}
+
+.column h4{
+	Text-align: center;
+	font-size: 50px;
+	padding:0px;
+	margin:0px;
+	color:#33c624;
+}
+
+#table{
+	padding: 0px;
+	margin-right:300px;
+	margin-left:300px;	
+}
+
+.factoid{
+	padding: 0px;
+	margin: 0px;
+	Text-align: center;
+}
+
+#mod{
+	margin-right:300px;
+	margin-left:300px;
+	margin-bottom: 100px;
+}

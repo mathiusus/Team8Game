@@ -1,0 +1,348 @@
+<!DOCTYPE HTML>
+<html>
+        <body>
+                <canvas id="myCanvas" width="1200" height="706" style="border:1px solid #000000;"></canvas>
+                <script>
+                        var canvas = document.getElementById('myCanvas');
+                        var context = canvas.getContext('2d');
+						canvas.addEventListener('mousedown',mouseDownInfo);
+						canvas.addEventListener('mousemove',mouseDragInfo);
+						canvas.addEventListener('mouseup',foodShot);
+						// game audio
+						var swing = new Audio();
+						swing.src = 'splat.mp3';
+						var song = new Audio();
+						song.src = 'song.wav';
+						// game variables
+						var pause = 780;
+						var burgerPosX = 100;
+						var burgerPosY = 300;
+						var xVelocity = 0;
+						var yVelocity = 0;
+						var time = 1;
+						var gravity = 2;
+						var targetX = 0;
+						var targetY = 0;
+						var p1CenterX = 165;
+						var p1CenterY = 480;
+						var p2CenterX = 1020;
+						var p2CenterY = 480;
+						// more game variables, bools
+						var gameOn = true;
+						var isMute = false;
+						var shot = false;
+						var hit = false;
+						var mouseDown = false;
+						var isPlayerOne = true;
+						var playerBlinker = 0;
+						var blinkerBool = true;
+						var randomShot = 1;
+						// variables for calculating trajectory vector
+						var startX = 0;
+						var startY = 0;
+						var endX = 0;
+						var endY = 0;
+						// declare image arrays
+						var playerOne = new Array();
+						var playerTwo = new Array();
+						var shootFood = new Array();
+						// declare image variables
+						var room = new Image();
+						var explode = new Image();
+						var brad = new Image();
+						var brad2 = new Image();
+						var target = new Image();
+						var candle = new Image();
+						var mute = new Image();
+						// player vital statistics
+						var shotStrength = 0;
+						var p1Weight = 0;
+						var p2Weight = 0;
+						var p1Life = 100;
+						var p2Life = 100;
+						// player position coordinates
+						var p1EricX = 100;
+						var p1EricY = 375;
+						var p2EricX = 1000;
+						var p2EricY = 375;
+						// p1 collision ranges
+						var p1HitRangeLowX = 110;
+						var p1HitRangeHighX = 170;
+						var p1HitRangeLowY = 360;
+						var p1HitRangeHighY = 570;
+						// p2 collision ranges
+						var p2HitRangeLowX = 1010;
+						var p2HitRangeHighX = 1070;
+						var p2HitRangeLowY = 360;
+						var p2HitRangeHighY = 570;	
+						// load game images
+						explode.src = 'xplode.gif';
+						room.src = 'room2.jpg';
+						brad.src = 'brad-hill.jpg';
+						brad2.src = 'brad-hill2.jpg';
+						target.src = 'target.gif';
+						candle.src = 'candle.gif';
+						mute.src = 'mute.png';
+						// food shot image array
+						shootFood[0] = new Image();		
+						shootFood[0].src = 'food-burger.gif';
+						shootFood[1] = new Image();
+						shootFood[1].src = 'pizza.png';
+						shootFood[2] = new Image();
+						shootFood[2].src = 'red-cand.png';					
+						shootFood[3] = new Image();
+						shootFood[3].src = 'ice-cream3.png';
+						// player 1 image array
+						playerOne[0] = new Image();
+						playerOne[0].src = 'p1.png';
+						playerOne[1] = new Image();
+						playerOne[1].src = 'p1-fat1.png';
+						playerOne[2] = new Image();
+						playerOne[2].src = 'p1-fat2.png';					
+						playerOne[3] = new Image();
+						playerOne[3].src = 'p1-fat3.png';
+						// player 2 image array
+						playerTwo[0] = new Image();	
+						playerTwo[0].src = 'p2.png';
+						playerTwo[1] = new Image();
+						playerTwo[1].src = 'p2-fat1.png';
+						playerTwo[2] = new Image();
+						playerTwo[2].src = 'p2-fat2.png';
+						playerTwo[3] = new Image();
+						playerTwo[3].src = 'p2-fat3.png';
+						// mute button for background music
+						function muteButton(e){
+							if( (e.offsetX > 1130) && (e.offsetX < 1180) && (e.offsetY > 600) && (e.offsetY < 650) ) {
+								if(isMute) {
+									isMute = false;
+								}
+								else {
+									isMute = true;
+									song.pause();
+								}
+								gameOn = false;
+							}
+						}
+						// get start coordinates from mouse down position
+						function mouseDownInfo(e){
+							//console.log(e.offsetX + " " + e.offsetY);	// <-- tool for getting coordinates from canvas
+							if(!gameOn) {
+								gameOn =true;
+							}
+							mouseDown = true;
+							startX = e.offsetX;
+							startY = e.offsetY;
+							muteButton(e);							
+						}
+						// gather mouse drag info for targeting cursor
+						function mouseDragInfo(e) {
+							if(gameOn) {
+								targetX = startX - e.offsetX;
+								targetY = startY - e.offsetY;
+							}
+						}
+						// function to calculate trajectory of projectile
+						function foodShot(e) {
+							if(gameOn) {
+								if(!shot) {
+									randomShot = Math.floor((Math.random()*10)%3);
+									shot = true;
+									mouseDown = false;
+									endX = e.offsetX;
+									endY = e.offsetY;
+									xVelocity = (startX - endX)/15;
+									yVelocity = (startY - endY)/10;
+									if(isPlayerOne) {
+										burgerPosX = 175;
+										burgerPosY = 530;
+										swing.load();
+										swing.play();
+									}
+									else{
+										burgerPosX = 975;
+										burgerPosY = 530;
+										swing.load();
+										swing.play();
+									}	
+									shotStrength = Math.pow(yVelocity, 2)/(-30);
+								}
+							}
+						}
+						// check if collision detected
+						function isHit() {
+							hit = true;
+							shot = false;
+						}
+						// reset the food projectile variables
+						function burgerReset() {
+							time = 1;
+							yVelocity = 0;
+							shot = false;
+						}
+						// reset vital game variables
+						function gameReset() {
+							p1EricX = 100;
+							p1EricY = 375;
+							p2EricX = 1000;
+							p2EricY = 375;
+							p1Weight = 0;
+							p2Weight = 0;
+							hit = false;
+							isPlayerOne = true;
+							playerBlinker = 0;
+							blinkerBool = true;
+							p1Life = 100;
+							p2Life = 100;
+							pause = 780;
+							shot = false;
+						}
+						// switch player function
+						function switchPlayer() {
+							if(gameOn) {
+								if(isPlayerOne) {
+									isPlayerOne = false;
+								}
+								else {
+									isPlayerOne = true;
+								}
+							}
+						}
+						// update game main loop
+						var updateGame = function(){
+							if(shot) {
+								burgerPosX += xVelocity;
+								burgerPosY += yVelocity + .5*gravity*Math.pow(time,2);
+								time += .1;
+								if((burgerPosX > 1200) || (burgerPosY > 706) || (burgerPosX < 0)){
+									shot = false;
+									burgerReset();
+									switchPlayer();
+								}
+							// keep track of collisions and damage to player's life, alert at game over and then reset
+								if(!isPlayerOne) {
+									if((burgerPosX > p1HitRangeLowX && burgerPosX < p1HitRangeHighX) && (burgerPosY > p1HitRangeLowY && burgerPosY < p1HitRangeHighY)) {
+										isHit();
+										p1Life += shotStrength*2;
+										if(p1Life < 75) {
+											p1Weight = 1;
+										}
+										if(p1Life < 50) {
+											p1Weight = 2;
+										}
+										if(p1Life < 25) {
+											p1Weight = 3;
+										}
+										if(p1Life < 0) {
+											p1Weight = 4;
+										}
+										burgerReset();
+										switchPlayer();
+										if(p1Weight>=4) {
+											context.drawImage(explode, p1EricX - 50, p1EricY);
+											context.drawImage(brad2, 530,25);
+											alert("Player Two Wins!");
+											gameReset();
+										}
+									}
+								}
+								if(isPlayerOne) {
+									if((burgerPosX > p2HitRangeLowX && burgerPosX < p2HitRangeHighX) && (burgerPosY > p2HitRangeLowY && burgerPosY < p2HitRangeHighY)) {
+										isHit();
+										p2Life += shotStrength*2;
+										if(p2Life < 75) {
+											p2Weight = 1;
+										}
+										if(p2Life < 50) {
+											p2Weight = 2;
+										}
+										if(p2Life < 25) {
+											p2Weight = 3;
+										}
+										if(p2Life < 0) {
+											p2Weight = 4;
+										}
+										burgerReset();
+										switchPlayer();
+										if(p2Weight>=4) {
+											context.drawImage(explode, p2EricX - 50, p2EricY);
+											context.drawImage(brad2, 530,25);
+											alert("Player One Wins!");
+											gameReset();
+										}
+									}
+								}
+							}
+						}
+						// draw-game main function
+						var drawGame = function(){
+							context.drawImage(room, 0,0);
+							context.drawImage(brad, 530,25);
+							context.drawImage(candle, 497, 43);
+							context.drawImage(candle, 650, 43);
+							context.drawImage(mute, 1130, 600);
+							context.drawImage(playerOne[p1Weight], p1EricX, p1EricY);
+							context.drawImage(playerTwo[p2Weight], p2EricX, p2EricY);
+							// gameOn indicates the game is being played, as opposed to the "mute button" being pressed
+							if(gameOn) {
+								// display the targeting cursor
+								if(mouseDown) {							
+									if(isPlayerOne) {
+										context.drawImage(target, (p1CenterX + targetX - 50), (p1CenterY + targetY));
+									}
+									else {
+										context.drawImage(target, (p2CenterX + targetX), (p2CenterY + targetY));
+									}
+								}
+								if(shot) {
+									context.drawImage(shootFood[randomShot], burgerPosX, burgerPosY);
+								}
+							}
+							// player titles' blink rate
+							if(playerBlinker%30 == 0) {
+								blinkerBool = !blinkerBool;
+							}
+							// display the player titles
+							if(isPlayerOne) {
+								if(blinkerBool) {
+									context.font="30px Arial";
+									context.fillStyle='#00FF00';
+									context.fillText("[Player One]",85,345);
+								}
+							}
+							else {
+								if(blinkerBool) {
+									context.font="30px Arial";
+									context.fillStyle='#00FF00';
+									context.fillText("[Player Two]",975,345);
+								}
+							}
+							// reset the isHit boolean...not sure why this is done here instead of update game
+							if(hit) {
+								hit = false;
+							}
+							// draw the health-status bars
+							var grd=context.createLinearGradient(120,0,220,0);
+							grd.addColorStop(0,"red");
+							grd.addColorStop(1,"yellow");
+							context.fillStyle=grd;
+							context.fillRect(120,600,(p1Life/100)*100,15);
+							grd=context.createLinearGradient(990,0,1090,0);
+							context.fillStyle=grd;
+							grd.addColorStop(0,"yellow");
+							grd.addColorStop(1,"red");
+							context.fillRect(990-(p2Life-100),600,100-(100-p2Life),15);
+						}
+						// main game loop
+						var ONE_FRAME_TIME = 1000 / 60;
+						var mainloop = function() {
+							if(!isMute) {
+								song.play();
+							}
+							updateGame();
+							drawGame();
+							playerBlinker++;
+						}
+						setInterval( mainloop, ONE_FRAME_TIME );
+                </script>
+        </body>
+</html>
